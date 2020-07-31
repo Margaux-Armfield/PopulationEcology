@@ -1,0 +1,20 @@
+---
+title: "PE_Host_parasitoid"
+author: "Margaux Armfield"
+date: "12/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+#nicholson-bailey: discrete time model
+lambda <- 1.1
+a <- 0.1
+c <- 10
+H <- c(0.5)
+P <- c(0.01)
+for(t in 1:100){
+  H[t+1] <- lambda*H[t]*exp(-a*P[t])
+  P[t+1] <- c*H[t]*(1-exp(-a*P[t]))
+}
+plot(data.frame(H,P), type = "l")
+```

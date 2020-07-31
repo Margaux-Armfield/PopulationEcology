@@ -1,0 +1,48 @@
+---
+title: "PE_MargauxA_07"
+author: "Margaux"
+date: "10/6/2019"
+output: html_document
+---
+#### Assignment 7: Allee Effects
+dn/dt=rn(1−nK)(n−aK)
+
+Your task is to numerically solve this model using ode . You should create a function PE_AlleeGrowth_Cont, which you should be able to adapt from the function PE_LogisticGrowth_Cont. The function should have 3 arguments:
+n0: which is the starting value of n
+parms: a list of model parameters with three elements r, K, and a
+t : the number of generations to run
+and should return a data.frame with a column for time and a column for n.
+
+Call the function you created and create a graph of the population density up to 50 time steps, Plot the dynamics of 2 populations one that starts with a density n0= 5 and one that starts from a population density n0 = 15 with parameter values:
+r=0.5, a=10, and K=100.
+
+#### Answer:
+
+```{r Allee effects}
+library(deSolve)
+
+PE_AlleeGrowth_Cont <- function(n0, parms, t)
+{
+  logistic.model.ODE <- function(t, n, parms)
+  {
+    dn.dt <- parms$r*n*(1-n/parms$K)*((n-parms$a)/parms$K)
+    return(list(c(dn.dt))) #returns a list with one element which is a vector
+  }
+  
+  #initial varaible is n0, set up as a vector with one, named element
+  inits <- c(n = n0)
+  p <- list(r = parms$r, K = parms$K, a = parms$a)
+  times <- 0:t # by represents your time step
+  
+  out <- ode(inits, times, func = logistic.model.ODE, parms = p)
+  return(as.data.frame(out))
+}
+p <- list(r=0.5, K=100, a = 10)
+pop1 <-PE_AlleeGrowth_Cont(n0=5, parms=p, t=50)
+pop2 <-PE_AlleeGrowth_Cont(n0=15, parms=p, t=50)
+
+max.y <- max(c(pop1$n, pop2$n))
+
+plot(pop1$time, pop1$n, col="hot pink", type = 'l', ylim = c(0,max.y))
+lines(pop2$time, pop2$n, col="blue")
+```
